@@ -1,0 +1,24 @@
+name: Publish Release
+
+on:
+  push:
+    tags:
+      - 'v*'  # This will trigger the workflow when a tag matching 'v*' pattern is pushed
+
+jobs:
+  publish_release:
+    runs-on: macos-latest  # Use macOS runner for macOS/Xcode environment
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Build Binaries
+        run: iOS/archive_xcframework.sh
+      - name: Create Release
+        id: create_release
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          artifacts: "archives/MMKV.xcframework"
+          token: ${{ secrets.GITHUB_TOKEN }}
+
